@@ -1,0 +1,7 @@
+imports-checks:
+  - folder: "pkg/$lib"
+    subpackages: true
+    rules:
+      - prefix: "github.com/matdurand/project1/"
+        allow:
+          - "pkg/*"
