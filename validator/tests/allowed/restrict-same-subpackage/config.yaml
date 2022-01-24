@@ -1,0 +1,8 @@
+imports-checks:
+  - folder: "internal/systems/$systemName"
+    subpackages: true
+    rules:
+      - prefix: "github.com/matdurand/go-import-checks/validator/tests/allowed/restrict-same-subpackage/"
+        allow:
+          - "internal/systems/$systemName/**"
+          - "internal/systems/!$systemName/api"

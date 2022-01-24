@@ -17,6 +17,13 @@ GO111MODULE=on go get github.com/matdurand/go-import-checks
 
 You need to provide the linter with a config in yaml to define the rules you want to inforce.
 
+### Rules syntax
+
+The rule's syntax is a subset of glob since it's a custom implementation just for package names. It supports:
+- '*' to match a single path element
+- '**' to match multiple path elements
+- '!xxx' to match anything different from 'xxx'
+
 ### Allow rules
 
 Here is an example of some rules:
@@ -27,7 +34,7 @@ imports-checks:
     rules:
       - prefix: "github.com/matdurand/project1/"
         allow:
-          - "pkg/*"
+          - "pkg/**"
 ```
 
 This translate to:
@@ -45,8 +52,8 @@ And any of thoses would fail:
 
 You can run this example:
 ```bash
-cd examples/allowed/test1
-go-import-checks --config=./allowed-config.yaml
+cd validator/tests/allowed/restrict-same-package
+go-import-checks --config=./config.yaml
 ```
 
 You can use `subpackages: true` to indicate that the rules applied to this folder or anything below.
@@ -61,13 +68,13 @@ imports-checks:
         allow:
           - "internal/systems/$systemName/*"
           - "internal/systems/!$systemName/api"
-          - "pkg/*"
+          - "pkg/**"
 ```
 
 You can run this example:
 ```bash
-cd examples/allowed/test2
-go-import-checks --config=./allowed-config.yaml
+cd validator/tests/allowed/restrict-same-subpackage
+go-import-checks --config=./config.yaml
 ```
 
 In essence, it means that any package in `internal/systems/xxx` can import any of it's subpackages, or the `sdk` package of any other system package, or anything in `pkg`.
@@ -94,13 +101,15 @@ imports-checks:
     rules:
       - prefix: "github.com/matdurand/project1/"
         reject:
-          - "internal/*"
+          - "internal/**"
     
 ```
 For any lib package inside `pkg`, if a import starts with `github.com/matdurand/project1/`, it cannot be for `internal/xxx` packages, but anything else is fine. So when using `allow`, you specify what can be used, and with `reject`, you specify what cannot be used.
 
+## Running
+
 You can run this example:
 ```bash
-cd examples/reject/test1
-go-import-checks --config=./reject-config.yaml
+cd validator/tests/reject/reject-another-package
+go-import-checks --config=./config.yaml
 ```

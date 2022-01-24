@@ -1,0 +1,8 @@
+imports-checks:
+  - folder: "pkg/$lib"
+    subpackages: true
+    rules:
+      - prefix: "github.com/matdurand/go-import-checks/validator/tests/reject/reject-another-package/"
+        reject:
+          - "internal"
+          - "internal/*"

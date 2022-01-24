@@ -1,0 +1,7 @@
+imports-checks:
+  - folder: "internal"
+    subpackages: true
+    rules:
+      - prefix: "github.com/matdurand/go-import-checks/validator/tests/allowed/restrict-wildcard-subpackage/"
+        allow:
+          - "components/*/api"

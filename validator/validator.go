@@ -2,6 +2,7 @@ package validator
 
 import (
 	"fmt"
+	"github.com/matdurand/go-import-checks/glob"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -86,29 +87,14 @@ func replaceVariables(pck string, variables map[string]string) string {
 	return strings.Join(resolvedParts, "/")
 }
 
+
 func isPackageMatchingExpression(pck string, pckExpression string) bool {
-	pckParts := strings.Split(pck, "/")
-	expParts := strings.Split(pckExpression, "/")
-	for i, expItem := range expParts {
-		if i >= len(pckParts) {
-			return false
-		}
-
-		if expItem == "*" {
-			return true
-		}
-
-		pckItem := pckParts[i]
-		if strings.HasPrefix(expItem, "!") {
-			if pckItem == expItem[1:] {
-				return false
-			}
-		} else if pckItem != expItem {
-			return false
-		}
+	g, err := glob.NewGlob(pckExpression)
+	if (err != nil) {
+		panic(err)
 	}
 
-	return len(pckParts) == len(expParts)
+	return g.Match(pck)
 }
 
 func validateImport(

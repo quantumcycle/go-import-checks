@@ -1,0 +1,7 @@
+imports-checks:
+  - folder: "pkg/$lib"
+    subpackages: true
+    rules:
+      - prefix: "github.com/matdurand/go-import-checks/validator/tests/allowed/restrict-same-package/"
+        allow:
+          - "pkg/*"
