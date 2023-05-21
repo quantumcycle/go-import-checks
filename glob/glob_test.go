@@ -1,7 +1,7 @@
 package glob_test
 
 import (
-	"github.com/matdurand/go-import-checks/glob"
+	"github.com/quantumcycle/go-import-checks/glob"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

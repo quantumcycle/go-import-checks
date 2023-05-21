@@ -1,4 +1,4 @@
-module github.com/matdurand/go-import-checks
+module github.com/quantumcycle/go-import-checks
 
 go 1.13
 

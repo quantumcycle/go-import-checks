@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/matdurand/go-import-checks/validator"
+	"github.com/quantumcycle/go-import-checks/validator"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
 )

@@ -37,7 +37,7 @@ func assertValidation(t *testing.T, path string, expectedErrs []ValidationError)
 	for _, e := range validationErrs {
 		found := false
 		for _, expErr := range expectedErrs {
-			if (e.Path == expErr.Path && e.Reason == expErr.Reason &&  e.ImportPath == expErr.ImportPath) {
+			if e.Path == expErr.Path && e.Reason == expErr.Reason && e.ImportPath == expErr.ImportPath {
 				found = true
 			}
 		}
@@ -58,9 +58,9 @@ func validationErrsPrettyPrint(errs []ValidationError) string {
 }
 
 func validationErrPrettyPrint(e ValidationError) string {
-	if (e.Reason == ReasonRejected) {
+	if e.Reason == ReasonRejected {
 		return fmt.Sprintf("[Import {%s} explicitly rejected in {%s}]", e.ImportPath, e.Path)
-	} else if (e.Reason == ReasonNotAllow) {
+	} else if e.Reason == ReasonNotAllow {
 		return fmt.Sprintf("[Import {%s} not allowed in {%s}]", e.ImportPath, e.Path)
 	} else {
 		panic("Unexpected reason")
@@ -70,9 +70,9 @@ func validationErrPrettyPrint(e ValidationError) string {
 func TestAllowSamePackage(t *testing.T) {
 	assertValidation(t, "tests/allowed/restrict-same-package", []ValidationError{
 		{
-			Path: "pkg/p1/p1.go",
-			Reason: ReasonNotAllow,
-			ImportPath: "github.com/matdurand/go-import-checks/validator/tests/allowed/restrict-same-package/internal",
+			Path:       "pkg/p1/p1.go",
+			Reason:     ReasonNotAllow,
+			ImportPath: "github.com/quantumcycle/go-import-checks/validator/tests/allowed/restrict-same-package/internal",
 		},
 	})
 }
@@ -80,9 +80,9 @@ func TestAllowSamePackage(t *testing.T) {
 func TestAllowSameSubPackage(t *testing.T) {
 	assertValidation(t, "tests/allowed/restrict-same-subpackage", []ValidationError{
 		{
-			Path: "internal/systems/system2/api/api.go",
-			Reason: ReasonNotAllow,
-			ImportPath: "github.com/matdurand/go-import-checks/validator/tests/allowed/restrict-same-subpackage/internal/systems/system1/domain",
+			Path:       "internal/systems/system2/api/api.go",
+			Reason:     ReasonNotAllow,
+			ImportPath: "github.com/quantumcycle/go-import-checks/validator/tests/allowed/restrict-same-subpackage/internal/systems/system1/domain",
 		},
 	})
 }
@@ -90,9 +90,9 @@ func TestAllowSameSubPackage(t *testing.T) {
 func TestAllowWildcardSubpackage(t *testing.T) {
 	assertValidation(t, "tests/allowed/restrict-wildcard-subpackage", []ValidationError{
 		{
-			Path: "internal/server.go",
-			Reason: ReasonNotAllow,
-			ImportPath: "github.com/matdurand/go-import-checks/validator/tests/allowed/restrict-wildcard-subpackage/components/component1/services",
+			Path:       "internal/server.go",
+			Reason:     ReasonNotAllow,
+			ImportPath: "github.com/quantumcycle/go-import-checks/validator/tests/allowed/restrict-wildcard-subpackage/components/component1/services",
 		},
 	})
 }
@@ -102,8 +102,7 @@ func TestRejectAnotherPackage(t *testing.T) {
 		{
 			Path:       "pkg/p1/p1.go",
 			Reason:     ReasonRejected,
-			ImportPath: "github.com/matdurand/go-import-checks/validator/tests/reject/reject-another-package/internal",
+			ImportPath: "github.com/quantumcycle/go-import-checks/validator/tests/reject/reject-another-package/internal",
 		},
 	})
 }
-

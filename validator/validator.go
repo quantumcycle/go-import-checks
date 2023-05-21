@@ -2,7 +2,7 @@ package validator
 
 import (
 	"fmt"
-	"github.com/matdurand/go-import-checks/glob"
+	"github.com/quantumcycle/go-import-checks/glob"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -87,10 +87,9 @@ func replaceVariables(pck string, variables map[string]string) string {
 	return strings.Join(resolvedParts, "/")
 }
 
-
 func isPackageMatchingExpression(pck string, pckExpression string) bool {
 	g, err := glob.NewGlob(pckExpression)
-	if (err != nil) {
+	if err != nil {
 		panic(err)
 	}
 
