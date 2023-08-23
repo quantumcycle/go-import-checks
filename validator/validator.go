@@ -24,7 +24,10 @@ type Check struct {
 }
 
 func (chk Check) isApplicable(path string) bool {
-	pathParts := strings.Split(path, "/")
+	//ignore the filename, since we only care about package name in golang, not filenames
+	dir, _ := filepath.Split(path)
+	dir = strings.TrimSuffix(dir, "/")
+	pathParts := strings.Split(dir, "/")
 	chkParts := strings.Split(chk.Folder, "/")
 	for i, chkItem := range chkParts {
 		if i >= len(pathParts) {

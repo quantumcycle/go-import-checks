@@ -87,6 +87,17 @@ func TestAllowSameSubPackage(t *testing.T) {
 	})
 }
 
+func TestAllowRootCallSubpackages(t *testing.T) {
+	assertValidation(t, "tests/allowed/allow-root-package-restrict-same-subpackage", []ValidationError{
+		{
+			Path:       "internal/systems/system2/api/api.go",
+			Reason:     ReasonNotAllow,
+			ImportPath: "github.com/quantumcycle/go-import-checks/validator/tests/allowed/allow-root-package-restrict-same-subpackage/internal/systems/system1/domain",
+		},
+		//no errors on init.go in the systems package. we want that since it should not be covered by the existing rule
+	})
+}
+
 func TestAllowWildcardSubpackage(t *testing.T) {
 	assertValidation(t, "tests/allowed/restrict-wildcard-subpackage", []ValidationError{
 		{

@@ -1,0 +1,15 @@
+imports-checks:
+  - folder: "internal/systems/$systemName"
+    subpackages: true
+    rules:
+      - prefix: "github.com/quantumcycle/go-import-checks/validator/tests/allowed/allow-root-package-restrict-same-subpackage/"
+        allow:
+          - "internal/systems/$systemName/**"
+          - "internal/systems/!$systemName/api"
+
+  - folder: "internal/systems"
+    subpackages: false
+    rules:
+      - prefix: "github.com/quantumcycle/go-import-checks/validator/tests/allowed/allow-root-package-restrict-same-subpackage/"
+        allow:
+          - "internal/systems/*/api"
