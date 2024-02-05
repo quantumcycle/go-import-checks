@@ -1,35 +1,37 @@
-package validator
+package validator_test
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"gopkg.in/yaml.v2"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/quantumcycle/go-import-checks/validator"
+	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 )
 
-func readYamlCfg(path string) (Config, error) {
+func readYamlCfg(path string) (validator.Config, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return Config{}, err
+		return validator.Config{}, err
 	}
 
-	cfg := Config{}
+	cfg := validator.Config{}
 	err = yaml.UnmarshalStrict(data, &cfg)
 	if err != nil {
-		return Config{}, err
+		return validator.Config{}, err
 	}
 
 	return cfg, nil
 }
 
-func assertValidation(t *testing.T, path string, expectedErrs []ValidationError) {
+func assertValidation(t *testing.T, path string, expectedErrs []validator.ValidationError) {
 	cfg, err := readYamlCfg(filepath.Join(path, "config.yaml"))
 	assert.Nil(t, err)
 
-	validationErrs, err := Validate(path, cfg.Checks, false)
+	validationErrs, err := validator.Validate(path, cfg.Checks, false)
 
 	assert.Nil(t, err)
 	assert.Len(t, validationErrs, len(expectedErrs))
@@ -49,7 +51,7 @@ func assertValidation(t *testing.T, path string, expectedErrs []ValidationError)
 	}
 }
 
-func validationErrsPrettyPrint(errs []ValidationError) string {
+func validationErrsPrettyPrint(errs []validator.ValidationError) string {
 	strs := []string{}
 	for _, e := range errs {
 		strs = append(strs, validationErrPrettyPrint(e))
@@ -57,41 +59,46 @@ func validationErrsPrettyPrint(errs []ValidationError) string {
 	return strings.Join(strs, "\n")
 }
 
-func validationErrPrettyPrint(e ValidationError) string {
-	if e.Reason == ReasonRejected {
+func validationErrPrettyPrint(e validator.ValidationError) string {
+	if e.Reason == validator.ReasonRejected {
 		return fmt.Sprintf("[Import {%s} explicitly rejected in {%s}]", e.ImportPath, e.Path)
-	} else if e.Reason == ReasonNotAllow {
+	} else if e.Reason == validator.ReasonNotAllow {
 		return fmt.Sprintf("[Import {%s} not allowed in {%s}]", e.ImportPath, e.Path)
 	} else {
 		panic("Unexpected reason")
 	}
 }
 
+func TestAllowSamePackageWithExclude(t *testing.T) {
+	//p1.go has some error, but is excluded from the checks, so no errors should be reported
+	assertValidation(t, "tests/allowed/restrict-but-exclude", []validator.ValidationError{})
+}
+
 func TestAllowSamePackage(t *testing.T) {
-	assertValidation(t, "tests/allowed/restrict-same-package", []ValidationError{
+	assertValidation(t, "tests/allowed/restrict-same-package", []validator.ValidationError{
 		{
 			Path:       "pkg/p1/p1.go",
-			Reason:     ReasonNotAllow,
+			Reason:     validator.ReasonNotAllow,
 			ImportPath: "github.com/quantumcycle/go-import-checks/validator/tests/allowed/restrict-same-package/internal",
 		},
 	})
 }
 
 func TestAllowSameSubPackage(t *testing.T) {
-	assertValidation(t, "tests/allowed/restrict-same-subpackage", []ValidationError{
+	assertValidation(t, "tests/allowed/restrict-same-subpackage", []validator.ValidationError{
 		{
 			Path:       "internal/systems/system2/api/api.go",
-			Reason:     ReasonNotAllow,
+			Reason:     validator.ReasonNotAllow,
 			ImportPath: "github.com/quantumcycle/go-import-checks/validator/tests/allowed/restrict-same-subpackage/internal/systems/system1/domain",
 		},
 	})
 }
 
 func TestAllowRootCallSubpackages(t *testing.T) {
-	assertValidation(t, "tests/allowed/allow-root-package-restrict-same-subpackage", []ValidationError{
+	assertValidation(t, "tests/allowed/allow-root-package-restrict-same-subpackage", []validator.ValidationError{
 		{
 			Path:       "internal/systems/system2/api/api.go",
-			Reason:     ReasonNotAllow,
+			Reason:     validator.ReasonNotAllow,
 			ImportPath: "github.com/quantumcycle/go-import-checks/validator/tests/allowed/allow-root-package-restrict-same-subpackage/internal/systems/system1/domain",
 		},
 		//no errors on init.go in the systems package. we want that since it should not be covered by the existing rule
@@ -99,20 +106,20 @@ func TestAllowRootCallSubpackages(t *testing.T) {
 }
 
 func TestAllowWildcardSubpackage(t *testing.T) {
-	assertValidation(t, "tests/allowed/restrict-wildcard-subpackage", []ValidationError{
+	assertValidation(t, "tests/allowed/restrict-wildcard-subpackage", []validator.ValidationError{
 		{
 			Path:       "internal/server.go",
-			Reason:     ReasonNotAllow,
+			Reason:     validator.ReasonNotAllow,
 			ImportPath: "github.com/quantumcycle/go-import-checks/validator/tests/allowed/restrict-wildcard-subpackage/components/component1/services",
 		},
 	})
 }
 
 func TestRejectAnotherPackage(t *testing.T) {
-	assertValidation(t, "tests/reject/reject-another-package", []ValidationError{
+	assertValidation(t, "tests/reject/reject-another-package", []validator.ValidationError{
 		{
 			Path:       "pkg/p1/p1.go",
-			Reason:     ReasonRejected,
+			Reason:     validator.ReasonRejected,
 			ImportPath: "github.com/quantumcycle/go-import-checks/validator/tests/reject/reject-another-package/internal",
 		},
 	})

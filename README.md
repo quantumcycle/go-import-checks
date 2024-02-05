@@ -115,6 +115,22 @@ imports-checks:
 
 For any lib package inside `pkg`, if a import starts with `github.com/quantumcycle/project1/`, it cannot be for `internal/xxx` packages, but anything else is fine. So when using `allow`, you specify what can be used, and with `reject`, you specify what cannot be used.
 
+## Exclusion
+
+There is some cases where it's ok to bypass the defined rules. You might need mocks to be able to bypass the rules for example. In these cases, use the `exclude` attribute to specify some regex for which the rules don't apply. Exclude are not case sensitive, but otherwise they are regex, so be sure to escape regex characters like dots.
+
+```yaml
+imports-checks:
+  - folder: "internal/systems/$systemName"
+    subpackages: true
+    exclude:
+      - ".*mock.*\\.go"
+    rules:
+      - prefix: "github.com/quantumcycle/project1/"
+        allow:
+          - "pkg/**"
+```
+
 ## Running
 
 You can run this example:

@@ -2,13 +2,15 @@ package validator
 
 import (
 	"fmt"
-	"github.com/quantumcycle/go-import-checks/glob"
 	"go/ast"
 	"go/parser"
 	"go/token"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
+
+	"github.com/quantumcycle/go-import-checks/glob"
 )
 
 type Rule struct {
@@ -18,12 +20,27 @@ type Rule struct {
 }
 
 type Check struct {
-	Folder      string `yaml:"folder"`
-	Subpackages bool   `yaml:"subpackages"`
-	Rules       []Rule `yaml:"rules"`
+	Folder      string   `yaml:"folder"`
+	Subpackages bool     `yaml:"subpackages"`
+	Exclude     []string `yaml:"exclude"`
+	Rules       []Rule   `yaml:"rules"`
+}
+
+func (chk Check) IsExcluded(path string) bool {
+	for _, exc := range chk.Exclude {
+		pattern := regexp.MustCompile("(?i)" + exc)
+		if pattern.MatchString(path) {
+			return true
+		}
+	}
+	return false
 }
 
 func (chk Check) isApplicable(path string) bool {
+	if chk.IsExcluded(path) {
+		return false
+	}
+
 	//ignore the filename, since we only care about package name in golang, not filenames
 	dir, _ := filepath.Split(path)
 	dir = strings.TrimSuffix(dir, "/")
