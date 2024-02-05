@@ -1,0 +1,9 @@
+imports-checks:
+  - folder: "pkg/$lib"
+    subpackages: true
+    exclude:
+      - ".*mock.*go"
+    rules:
+      - prefix: "github.com/quantumcycle/go-import-checks/validator/tests/allowed/restrict-same-package/"
+        allow:
+          - "pkg/*"
