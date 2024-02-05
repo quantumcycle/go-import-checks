@@ -8,6 +8,14 @@ The idea came from [go-cleanarch](https://github.com/roblaszczak/go-cleanarch), 
 
 ## Install
 
+For GO version 1.17 or later:
+
+```bash
+$ go install github.com/quantumcycle/go-import-checks@latest
+```
+
+For earlier GO versions:
+
 ```
 GO111MODULE=on go get github.com/quantumcycle/go-import-checks
 ```
