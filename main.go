@@ -64,7 +64,7 @@ func main() {
 
 			cfg, err := readYamlCfg(c.String("config"))
 			if err != nil {
-				log.Fatalf("Cannot read yaml config file [%s]", c.String("config"))
+				log.Fatalf("Cannot read yaml config file [%s]: %s", c.String("config"), err)
 			}
 
 			validateImports(cfg, pathToCheck, c.Bool("debug"))
