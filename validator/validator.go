@@ -256,6 +256,15 @@ func Validate(root string, checks []Check, debug bool) ([]ValidationError, error
 
 	errors := []ValidationError{}
 	err := filepath.Walk(root, func(path string, fi os.FileInfo, err error) error {
+		// we may not be able to read a path due to permissions or something else. log it and continue.
+		if err != nil {
+			if debug {
+				fmt.Printf("WARNING: Error accessing path %s: %v\n", path, err)
+			}
+
+			return nil
+		}
+
 		if fi.IsDir() {
 			return nil
 		}
